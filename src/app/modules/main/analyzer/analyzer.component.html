@@ -1,0 +1,185 @@
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>
+
+<ng-template #subHeader>
+  <div class="flex">
+    <div class="selects">
+      <div class="select">
+        <mat-form-field appearance="fill" class="formField">
+          <mat-icon matPrefix>account_circle</mat-icon>
+          <mat-select
+            class="selectTag"
+            placeholder="Agent"
+            (selectionChange)="selectAgent($event)"
+            id="agent"
+            name="agent"
+          >
+            <mat-option
+              *ngFor="let agent of agents.agents$ | async"
+              [value]="agent.id"
+              >{{ agent.fullName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- 
+        <label for="agent">Agent</label>
+        <select (change)="selectAgent($event)" id="agent" name="agent">
+          <option
+            *ngFor="let agent of agents.agents$ | async"
+            [value]="agent.id"
+          >
+            {{ agent.fullName }}
+          </option>
+        </select> -->
+      </div>
+
+      <div class="select">
+        <mat-form-field appearance="fill" class="callFormField">
+          <mat-icon matPrefix>call</mat-icon>
+          <mat-select
+            class="selectTag"
+            placeholder="Call"
+            (selectionChange)="selectCall($event)"
+            id="call"
+            name="call"
+          >
+            <mat-option
+              *ngFor="let call of calls.activeAgentCalls$ | async"
+              [value]="call.id"
+              >{{ call?.startTime | date: "dd/MM/yyyy" }} -
+              {{ call?.customer?.speakerName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- <label for="call">Call</label>
+        <select (change)="selectCall($event)" id="call" name="call">
+          <option
+            *ngFor="let call of calls.activeAgentCalls$ | async"
+            [value]="call.id"
+          >
+            {{ call.startTime }}
+          </option>
+        </select> -->
+      </div>
+    </div>
+
+    <div
+      style="align-items: center; display: flex; gap: 0.5rem"
+      *ngIf="!isLoading$.value"
+    >
+      MATCHING SENSITIVITY
+      <mat-slider
+        aria-label="unit(s)"
+        #matcher
+        [value]="calls.matchingPercentage$ | async"
+        max="100"
+        min="1"
+        value="50"
+      ></mat-slider>
+      <!-- <input
+        #matcher
+        (change)="calls.setMatchingPercentage(matcher.value)"
+        [value]="calls.matchingPercentage$ | async"
+        max="100"
+        min="1"
+        value="50"
+        type="range"
+      /> -->
+    </div>
+  </div>
+</ng-template>
+<!-- <h3>DATA: {{ calls.activeTranscript$ | async | json }}</h3> -->
+
+<section class="content" *ngIf="!(isLoading$ | async); else showThis">
+  <div class="card">
+    <h1>
+      Real
+      <span>Alignment to the expected script: 32%</span>
+    </h1>
+
+    <!-- <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef>No.</th>
+        <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="weight">
+        <th mat-header-cell *matHeaderCellDef>Weight</th>
+        <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="symbol">
+        <th mat-header-cell *matHeaderCellDef>Symbol</th>
+        <td mat-cell *matCellDef="let element">{{ element.symbol }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table> -->
+
+    <ng-container *ngIf="calls.activeTranscript$ | async as call">
+      <table width="100%">
+        <thead>
+          <th>Time</th>
+          <th>Speaker</th>
+          <th>Sentence</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transcript of call.transcript">
+            <td>{{ fmtMSS(transcript.timeFrom!) }}</td>
+            <td>{{ call.getSpeaker(transcript.channel) }}</td>
+            <td
+              tooltip="61% matching with line #1 'This is a sample sentence #76'"
+            >
+              {{ transcript.sentence }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+  </div>
+
+  <div class="card">
+    <h1>
+      Expected
+      <span>Percent of script covered: 0%</span>
+    </h1>
+    <table *ngIf="calls.activeTranscript$ | async as call" width="100%">
+      <thead>
+        <th>Line</th>
+        <th>Speaker</th>
+        <th>Sentence</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let script of call.script">
+          <td>{{ script.order + 1 }}</td>
+          <td>Rep:</td>
+          <td
+            tooltip="61% matching with line #1 'This is a sample sentence #76'"
+          >
+            {{ script.sentence }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<ng-template #showThis>
+  <div class="empty-state">
+    <img src="../../../../assets//img//no-selection.svg" />
+    <h2>Selection pending</h2>
+    <p>
+      Select a call from top menu and a transcript <br />
+      analysis will be shown here
+    </p>
+  </div>
+</ng-template>
