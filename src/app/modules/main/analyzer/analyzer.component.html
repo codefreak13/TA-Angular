@@ -39,6 +39,7 @@
         <mat-form-field appearance="fill" class="callFormField">
           <mat-icon matPrefix>call</mat-icon>
           <mat-select
+            [(ngModel)]="resetCall"
             class="selectTag"
             placeholder="Call"
             (selectionChange)="selectCall($event)"
@@ -67,17 +68,21 @@
 
     <div
       style="align-items: center; display: flex; gap: 0.5rem"
-      *ngIf="!isLoading$.value"
+      *ngIf="!calls.isLoading$.value"
     >
       MATCHING SENSITIVITY
       <mat-slider
-        aria-label="unit(s)"
+        [(ngModel)]="defaultSliderValue"
         #matcher
+        aria-label="unit(s)"
+        (change)="calls.setMatchingPercentage(matcher.value)"
         [value]="calls.matchingPercentage$ | async"
-        max="100"
-        min="1"
-        value="50"
+        defaultColor="black"
+        defaultTabIndex="38"
+        class="mat-slider"
       ></mat-slider>
+
+      <p>{{ matcher.value }}%</p>
       <!-- <input
         #matcher
         (change)="calls.setMatchingPercentage(matcher.value)"
@@ -92,67 +97,77 @@
 </ng-template>
 <!-- <h3>DATA: {{ calls.activeTranscript$ | async | json }}</h3> -->
 
-<section class="content" *ngIf="!(isLoading$ | async); else showThis">
-  <div class="card">
-    <h1>
-      Real
-      <span>Alignment to the expected script: 32%</span>
-    </h1>
+<section *ngIf="!(calls.isLoading$ | async); else showThis">
+  <div *ngIf="calls.activeTranscript$ | async as call" class="content">
+    <div class="card">
+      <h1>
+        Real
+        <span>Alignment to the expected script: 32%</span>
+      </h1>
+      <table mat-table [dataSource]="call" class="mat-elevation-z8 demo-table">
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef>Time</th>
+          <td mat-cell *matCellDef="let element">
+            <!-- {{ fmtMSS(element.timeFrom!) }} -->
+            {{ element.order }}
+          </td>
+        </ng-container>
 
-    <!-- <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Speaker</th>
+          <td mat-cell *matCellDef="let element">
+            {{ call.getSpeaker(element.channel) }}
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef>No.</th>
-        <td mat-cell *matCellDef="let element">{{ element.position }}</td>
-      </ng-container>
+        <ng-container matColumnDef="weight">
+          <th mat-header-cell *matHeaderCellDef>Sentence</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            matTooltip="61% matching with line #1 'This is a sample sentence #76' 61% matching with line #1 'This is a sample sentence #76'"
+            matTooltipClass="toolTip"
+            matTooltipPosition="above"
+          >
+            {{ element.sentence }}
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Name</th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef>Weight</th>
-        <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="symbol">
-        <th mat-header-cell *matHeaderCellDef>Symbol</th>
-        <td mat-cell *matCellDef="let element">{{ element.symbol }}</td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table> -->
-
-    <ng-container *ngIf="calls.activeTranscript$ | async as call">
-      <table width="100%">
-        <thead>
-          <th>Time</th>
-          <th>Speaker</th>
-          <th>Sentence</th>
-        </thead>
-        <tbody>
-          <tr *ngFor="let transcript of call.transcript">
-            <td>{{ fmtMSS(transcript.timeFrom!) }}</td>
-            <td>{{ call.getSpeaker(transcript.channel) }}</td>
-            <td
-              tooltip="61% matching with line #1 'This is a sample sentence #76'"
-            >
-              {{ transcript.sentence }}
-            </td>
-          </tr>
-        </tbody>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
-    </ng-container>
-  </div>
 
-  <div class="card">
-    <h1>
-      Expected
-      <span>Percent of script covered: 0%</span>
-    </h1>
-    <table *ngIf="calls.activeTranscript$ | async as call" width="100%">
+      <!-- (click)="clickedRows.add(row)"
+          [class.demo-row-is-clicked]="clickedRows.has(row)" -->
+
+      <!-- <table width="100%" *ngIf="calls.activeTranscript$ | async as call">
+      <thead>
+        <th>Time</th>
+        <th>Speaker</th>
+        <th>Sentence</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transcript of call.transcript">
+          <td>{{ fmtMSS(transcript.timeFrom!) }}</td>
+          <td>{{ call.getSpeaker(transcript.channel) }}</td>
+          <td
+            matTooltip="61% matching with line #1 'This is a sample sentence #76' 61% matching with line #1 'This is a sample sentence #76'"
+            matTooltipClass="toolTip"
+            matTooltipPosition="above"
+          >
+            {{ transcript.sentence }}
+          </td>
+        </tr>
+      </tbody>
+    </table> -->
+    </div>
+
+    <div class="card">
+      <h1>
+        Expected
+        <span>Percent of script covered: 0%</span>
+      </h1>
+      <!-- <table *ngIf="calls.activeTranscript$ | async as call" width="100%">
       <thead>
         <th>Line</th>
         <th>Speaker</th>
@@ -169,7 +184,8 @@
           </td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
+    </div>
   </div>
 </section>
 

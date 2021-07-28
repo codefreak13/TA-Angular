@@ -6,6 +6,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatSliderModule } from "@angular/material/slider";
 import { CommonModule } from "@angular/common";
 import { MatTableModule } from "@angular/material/table";
+import { FormsModule } from "@angular/forms";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 import { CoreModule } from "src/app/core/core.module";
 
@@ -23,6 +25,8 @@ import { ROUTES } from "./analyzer.routes";
     MatSliderModule,
     CommonModule,
     MatTableModule,
+    FormsModule,
+    MatTooltipModule,
   ],
 })
 export class AnalyzerModule {}

@@ -7,3 +7,39 @@ body {
   margin: 0;
   font-family: Roboto, sans-serif;
 }
+
+.mat-slider {
+  .mat-slider-thumb,
+  .mat-slider-track-fill {
+    background-color: #5a5a71 !important;
+  }
+
+  .mat-slider-min-value:not(.mat-slider-thumb-label-showing) {
+    background-color: transparent !important;
+  }
+}
+
+.formField,
+.callFormField {
+  .mat-form-field-appearance-fill,
+  .mat-form-field-flex {
+    align-items: center;
+  }
+
+  .mat-select-arrow {
+    margin: 4px 10px -10px;
+  }
+
+  .mat-form-field-flex.ng-tns-c124-0,
+  .mat-form-field-flex.ng-tns-c124-2 {
+    padding: 0.5em 0.5em 0.5em 0.5em;
+  }
+}
+
+mat-tooltip-component .mat-tooltip {
+  max-width: 40rem !important;
+  font-size: 1rem;
+  background-color: #616161;
+  margin-right: 2rem;
+  margin-bottom: -0.1rem;
+}

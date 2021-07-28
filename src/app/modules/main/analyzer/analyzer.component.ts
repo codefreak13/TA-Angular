@@ -5,27 +5,32 @@ import {
   OnInit,
   TemplateRef,
   ViewChild,
+  ViewEncapsulation,
 } from "@angular/core";
 import { Router } from "@angular/router";
-import { BehaviorSubject } from "rxjs";
+import { MatTableDataSource } from "@angular/material/table";
 
 import AgentFacade from "src/app/core/facades/agent.facade";
 import CallFacade from "src/app/core/facades/call.facade";
 
 import TemplateService from "src/app/core/services/template.service";
+import Transcript from "src/app/core/models/transcript.model";
 
 @Component({
   selector: "app-analyzer",
   templateUrl: "./analyzer.component.html",
   styleUrls: ["./analyzer.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export default class AnalyzerComponent implements OnInit, AfterViewInit {
   @ViewChild("subHeader")
   private subHeader?: TemplateRef<any>;
-  public dataSource: any[] = [];
   public dataSourceRep: any[] = [];
-  public isLoading$ = new BehaviorSubject<boolean>(true);
+  resetCall = "";
+  defaultSliderValue = "38";
+  // dataSource = new MatTableDataSource<Transcript>()
+  displayedColumns: string[] = ["Time", "Speaker", "Sentence"];
 
   constructor(
     public agents: AgentFacade,
@@ -39,21 +44,21 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
   }
 
   public ngOnInit(): void {
-    this.dataSource = MOCK_DATA();
-    this.dataSourceRep = MOCK_DATA().slice(-25);
-    console.log(this.isLoading$.value, "mount");
+    // this.calls.activeTranscript$._subscribe((result)=>{
+    //   this.dataSource  =  result.body;
+    // })
   }
 
   public selectAgent(event: any): void {
-    console.log(event, "event");
+    this.defaultSliderValue = "38";
+    this.resetCall = "";
+    this.calls.isLoading$.next(true);
     this.agents.setActiveAgent(event?.value);
   }
 
   public selectCall(event: any): void {
-    this.isLoading$.next(false);
     this.calls.selectCall(event?.value);
-    // this.agents.setActiveAgent("");
-    console.log(this.isLoading$.value, "mounted");
+    console.log(this.calls.activeTranscript$, "transcript");
   }
 
   fmtMSS(s: number): string | number {

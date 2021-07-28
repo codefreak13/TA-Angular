@@ -19,6 +19,7 @@ export default class CallState {
   public activeTranscript$ = this._activeTranscript$.asObservable();
   public calls$ = this._calls$.asObservable();
   public matchingPercentage$ = this._matchingPercentage$.asObservable();
+  isLoading$ = new BehaviorSubject<boolean>(true);
 
   constructor(
     private readonly _svc: CallService,
@@ -45,11 +46,14 @@ export default class CallState {
     const transcript = this._transcripts$.value.find(
       (transcript: Transcript) => transcript.id === id
     );
-    this._activeTranscript$.next(transcript);
+    setTimeout(() => {
+      this._activeTranscript$.next(transcript);
+    }, 10);
+    this.isLoading$.next(false);
     console.log(id, transcript);
   }
 
-  public setMatchingPercentage(value: number | string): void {
+  public setMatchingPercentage(value: number | null): void {
     this._matchingPercentage$.next(parseInt(`${value}`));
     console.log("Matching %", value);
   }
