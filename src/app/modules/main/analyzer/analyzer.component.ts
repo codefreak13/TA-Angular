@@ -30,7 +30,16 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
   resetCall = "";
   defaultSliderValue = "38";
   // dataSource = new MatTableDataSource<Transcript>()
-  displayedColumns: string[] = ["Time", "Speaker", "Sentence"];
+  // This didn't work because it was in capital letters and the keys didn't match the object
+  // displayedColumns: string[] = ["Time", "Speaker", "Sentence"]; 
+
+  // These are case sensitive. They must match the columns in the data source.
+  displayedColumns: string[] = [ 
+    "order", "similarity", "sentence", 
+    "matching_sentence", "matching_line", 
+    "channel", "timeFrom", "timeTo"
+  ];
+  object: any;
 
   constructor(
     public agents: AgentFacade,
@@ -44,6 +53,7 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
   }
 
   public ngOnInit(): void {
+    this.object = Object;
     // this.calls.activeTranscript$._subscribe((result)=>{
     //   this.dataSource  =  result.body;
     // })
