@@ -5,10 +5,8 @@ import {
   OnInit,
   TemplateRef,
   ViewChild,
-  ViewEncapsulation,
 } from "@angular/core";
 import { Router } from "@angular/router";
-import { MatTableDataSource } from "@angular/material/table";
 
 import AgentFacade from "src/app/core/facades/agent.facade";
 import CallFacade from "src/app/core/facades/call.facade";
@@ -21,7 +19,6 @@ import Transcript from "src/app/core/models/transcript.model";
   templateUrl: "./analyzer.component.html",
   styleUrls: ["./analyzer.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
 })
 export default class AnalyzerComponent implements OnInit, AfterViewInit {
   @ViewChild("subHeader")
@@ -29,8 +26,8 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
   public dataSourceRep: any[] = [];
   resetCall = "";
   defaultSliderValue = "38";
-  // dataSource = new MatTableDataSource<Transcript>()
-  displayedColumns: string[] = ["Time", "Speaker", "Sentence"];
+  displayedColumns: string[] = ["timeFrom", "channel", "sentence"];
+  object: any;
 
   constructor(
     public agents: AgentFacade,
@@ -44,6 +41,7 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
   }
 
   public ngOnInit(): void {
+    this.object = Object;
     // this.calls.activeTranscript$._subscribe((result)=>{
     //   this.dataSource  =  result.body;
     // })
