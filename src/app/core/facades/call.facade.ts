@@ -16,6 +16,10 @@ export default class CallFacade {
     this._state
   );
   public isLoading$ = this._state.isLoading$;
+  public transcriptOrderIds$ = this._state.transcriptOrderIds$;
+  public matchValue = this._state.matchValue;
+  public scriptOrderIds$ = this._state.scriptOrderIds$;
+  public activeScript$ = this._state.activeScript$;
 
   constructor(private readonly _state: CallState) {}
 }

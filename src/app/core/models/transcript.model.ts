@@ -38,7 +38,6 @@ export default class Transcript {
     if (channel === this.agent?.channel) {
       let speakerName;
       if (this.agent?.speakerName && this.agent?.speakerName !== "") {
-        console.log(this.agent?.speakerName, "speaker");
         speakerName = this.agent?.speakerName?.split(" ", 1).join(" ");
       } else {
         speakerName = "unknown";
