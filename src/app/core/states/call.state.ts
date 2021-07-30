@@ -37,7 +37,6 @@ export default class CallState {
 
     this._svc.getTranscripts$().subscribe((transcripts: Transcript[]) => {
       this._transcripts$.next(transcripts);
-      console.log(transcripts, "id");
     });
 
     this._agents.activeAgent$.subscribe((agent: Agent) => {
@@ -72,7 +71,18 @@ export default class CallState {
     return selectedScript;
   }
 
+  public percentOfScriptCovered() {
+    const transcript = this.matchedTranscript?.transcript;
+    const script = this.matchedTranscript?.script;
+
+    const tp = transcript?.map((i) => i.similarity);
+    // const coverage =  script?.filter((i) => tp?.includes() )
+
+    // console.log(coverage, transcript?.length, "coverr");
+  }
+
   public setMatchingPercentage(value: number | null): void {
+    this.percentOfScriptCovered();
     this.matchValue.next(value);
     this._matchingPercentage$.next(parseInt(`${value}`));
     const transcript = this.matchedTranscript?.transcript;

@@ -19,7 +19,7 @@ import Script from "src/app/core/models/script.model";
   styleUrls: ["./analyzer.component.scss"],
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export default class AnalyzerComponent implements OnInit, AfterViewInit {
+export default class AnalyzerComponent implements AfterViewInit {
   @ViewChild("subHeader")
   private subHeader?: TemplateRef<any>;
   public dataSourceRep: any[] = [];
@@ -42,8 +42,6 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
     this._tplService.register("subHeader", this.subHeader);
   }
 
-  public ngOnInit(): void {}
-
   public selectAgent(event: any): void {
     this.defaultSliderValue = "38";
     this.resetCall = "";
@@ -63,8 +61,10 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
   public matchSelectedScriptLine(element: Script) {
     this.highlightMatchingScript = true;
     const script = this.calls.activeScript$.value;
-    const value = script?.find((i) => i.sentence === element.matchingSentence);
-    this.matchedSentenceLine = value?.order;
+    const matchingSentences = script?.find(
+      (i) => i.sentence === element.matchingSentence
+    );
+    this.matchedSentenceLine = matchingSentences?.order;
   }
 
   public highlightMatchedTranscriptLines(order: number): string {
