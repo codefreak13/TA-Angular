@@ -90,14 +90,17 @@
     }
 
     mat-row,
-    mat-header-row,
     mat-footer-row,
-    th.mat-header-cell,
     td.mat-cell,
     td.mat-footer-cell {
       border-bottom-color: #fff !important;
       border-bottom-width: 0.75rem !important;
       border-left-width: 3rem !important;
+    }
+
+    th.mat-header-cell,
+    mat-header-row {
+      border-bottom-color: rgba(0, 0, 0, 0.12) !important;
     }
 
     .highlightedColorStyle {

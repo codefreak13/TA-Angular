@@ -69,7 +69,10 @@
     <div class="card">
       <h1>
         Real
-        <span>Alignment to the expected script: 32%</span>
+        <span
+          >Alignment to the expected script:
+          {{ calls.percentOfScriptCovered$.value[0] }}%</span
+        >
       </h1>
       <div class="table-container">
         <table mat-table [dataSource]="call.transcript" class="table">
@@ -110,7 +113,10 @@
     <div class="card">
       <h1>
         Expected
-        <span>Percent of script covered: 0%</span>
+        <span
+          >Percent of script covered:
+          {{ calls.percentOfScriptCovered$.value[1] }}%</span
+        >
       </h1>
       <div class="table-container">
         <table mat-table [dataSource]="call.script" class="table">
