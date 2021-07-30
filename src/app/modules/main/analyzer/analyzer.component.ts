@@ -6,45 +6,40 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
-import { Router } from "@angular/router";
 
 import AgentFacade from "src/app/core/facades/agent.facade";
 import CallFacade from "src/app/core/facades/call.facade";
 
 import TemplateService from "src/app/core/services/template.service";
-import Transcript from "src/app/core/models/transcript.model";
+import Script from "src/app/core/models/script.model";
 
 @Component({
   selector: "app-analyzer",
   templateUrl: "./analyzer.component.html",
   styleUrls: ["./analyzer.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
-export default class AnalyzerComponent implements OnInit, AfterViewInit {
+export default class AnalyzerComponent implements AfterViewInit {
   @ViewChild("subHeader")
   private subHeader?: TemplateRef<any>;
   public dataSourceRep: any[] = [];
-  resetCall = "";
-  defaultSliderValue = "38";
-  displayedColumns: string[] = ["timeFrom", "channel", "sentence"];
-  object: any;
+  public resetCall = "";
+  public defaultSliderValue = "38";
+  public realDisplayedColumns: string[] = ["timeFrom", "channel", "sentence"];
+  public expectedDisplayedColumns: string[] = [];
+  public expectedCompositeDisplayedColumns =
+    this.expectedDisplayedColumns.concat(["order", "rep", "sentence"]);
+  public highlightMatchingScript: boolean = false;
+  public matchedSentenceLine: number | undefined;
 
   constructor(
     public agents: AgentFacade,
     public calls: CallFacade,
-    private _tplService: TemplateService,
-    private _router: Router
+    private _tplService: TemplateService
   ) {}
 
   public ngAfterViewInit(): void {
     this._tplService.register("subHeader", this.subHeader);
-  }
-
-  public ngOnInit(): void {
-    this.object = Object;
-    // this.calls.activeTranscript$._subscribe((result)=>{
-    //   this.dataSource  =  result.body;
-    // })
   }
 
   public selectAgent(event: any): void {
@@ -56,32 +51,86 @@ export default class AnalyzerComponent implements OnInit, AfterViewInit {
 
   public selectCall(event: any): void {
     this.calls.selectCall(event?.value);
-    console.log(this.calls.activeTranscript$, "transcript");
+    this.calls.setMatchingPercentage(38);
   }
 
-  fmtMSS(s: number): string | number {
+  public formatTime(s: number): string | number {
     return (s - (s %= 60)) / 60 + (9 < s ? ":" : ":0") + s;
   }
-}
 
-const MOCK_DATA = () => {
-  const DATA: any[] = [];
-  const SPEAKERS: string[] = ["Harvey", "Luke"];
-
-  let currentTime = 30;
-
-  for (let i = 0; i < 100; i++) {
-    const min = Math.floor(currentTime / 60);
-    const sec = Math.floor(currentTime - min * 60);
-
-    DATA.push({
-      time: `${("0" + min).slice(-2)}:${("0" + sec).slice(-2)}`,
-      speaker: SPEAKERS[Math.floor(Math.random() * SPEAKERS.length)],
-      sentence: `This is a sample sentence #${i + 1}`,
-    });
-
-    currentTime += Math.random() * 10 + 5;
+  public matchSelectedScriptLine(element: Script) {
+    this.highlightMatchingScript = true;
+    const script = this.calls.activeScript$.value;
+    const matchingSentences = script?.find(
+      (i) => i.sentence === element.matchingSentence
+    );
+    this.matchedSentenceLine = matchingSentences?.order;
   }
 
-  return DATA;
-};
+  public highlightMatchedTranscriptLines(order: number): string {
+    const transcript = this.calls.transcriptOrderIds$.value;
+    let a;
+
+    if (transcript?.includes(order)) {
+      a = "highlightedColorStyle";
+    } else {
+      a = "normalColorStyle";
+    }
+    return a;
+  }
+
+  public highlightMatchedScriptLines(element: Script): string {
+    const script = this.calls.scriptOrderIds$.value;
+    let b;
+
+    if (script?.includes(element?.order)) {
+      b = "highlightedColorStyle";
+    } else {
+      b = "normalColorStyle";
+    }
+
+    if (
+      element &&
+      element.similarity &&
+      element?.order === this.matchedSentenceLine &&
+      this.highlightMatchingScript &&
+      element.similarity * 100 >= this.calls.matchValue.value!
+    ) {
+      b = "matchedColorStyle";
+    }
+    return b;
+  }
+
+  public toolTipData(element: Script): string {
+    if (
+      element.similarity &&
+      element.matchingSentence &&
+      this.matchedSentenceLine
+    ) {
+      const lineNumber = this.matchedSentenceLine + 1;
+      return (
+        element.similarity * 100 +
+        "% " +
+        "match with #line" +
+        lineNumber +
+        " " +
+        '"' +
+        element.matchingSentence +
+        '"'
+      );
+    }
+    return "No matching sentence";
+  }
+
+  public toggleToolTip(element: Script): boolean {
+    let tooglestate = true;
+    if (this.calls.matchValue.value && element.similarity) {
+      if (element.similarity * 100 >= this.calls.matchValue.value) {
+        tooglestate = false;
+      } else {
+        tooglestate = true;
+      }
+    }
+    return tooglestate;
+  }
+}

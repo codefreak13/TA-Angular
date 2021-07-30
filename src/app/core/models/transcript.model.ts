@@ -38,8 +38,9 @@ export default class Transcript {
     if (channel === this.agent?.channel) {
       let speakerName;
       if (this.agent?.speakerName && this.agent?.speakerName !== "") {
-        console.log(this.agent?.speakerName, "speaker");
         speakerName = this.agent?.speakerName?.split(" ", 1).join(" ");
+      } else if (speakerName === null) {
+        speakerName = "unknown";
       } else {
         speakerName = "unknown";
       }
@@ -48,6 +49,8 @@ export default class Transcript {
       let customerName;
       if (this.customer?.speakerName) {
         customerName = this.customer?.speakerName?.split(" ", 1).join(" ");
+      } else if (customerName === null) {
+        customerName = "unknown";
       } else {
         customerName = "unknown";
       }
