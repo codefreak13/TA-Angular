@@ -25,7 +25,10 @@ export default class CallState {
   public transcriptOrderIds$ = new BehaviorSubject<number[] | undefined>([]);
   public scriptOrderIds$ = new BehaviorSubject<number[] | undefined>([]);
   public matchedTranscript: Transcript | undefined;
-  public matchValue = new BehaviorSubject<number | null>(0);
+  public matchValue$ = new BehaviorSubject<number | null>(0);
+  public percentOfScriptCovered$ = new BehaviorSubject<(number | undefined)[]>(
+    []
+  );
 
   constructor(
     private readonly _svc: CallService,
@@ -75,15 +78,33 @@ export default class CallState {
     const transcript = this.matchedTranscript?.transcript;
     const script = this.matchedTranscript?.script;
 
-    const tp = transcript?.map((i) => i.similarity);
-    // const coverage =  script?.filter((i) => tp?.includes() )
+    const transcriptMatch = script?.map((i) => i.similarity);
+    const scriptMatch = transcript?.map((i) => i.similarity);
 
-    // console.log(coverage, transcript?.length, "coverr");
+    const coverageTranscript = transcript
+      ?.filter((i) => transcriptMatch?.includes(i.similarity))
+      .map((i) => i.similarity);
+
+    const coverageScript = script
+      ?.filter((i) => scriptMatch?.includes(i.similarity))
+      .map((i) => i.similarity);
+
+    let transcriptPercent, scriptPercent;
+    if (coverageTranscript && transcript && script && coverageScript) {
+      transcriptPercent = Math.round(
+        (coverageTranscript?.length / transcript?.length) * 100
+      );
+      scriptPercent = Math.round(
+        (coverageScript?.length / script?.length) * 100
+      );
+    }
+    const percentOfScriptCovered = [transcriptPercent, scriptPercent];
+    this.percentOfScriptCovered$.next(percentOfScriptCovered);
   }
 
   public setMatchingPercentage(value: number | null): void {
     this.percentOfScriptCovered();
-    this.matchValue.next(value);
+    this.matchValue$.next(value);
     this._matchingPercentage$.next(parseInt(`${value}`));
     const transcript = this.matchedTranscript?.transcript;
     const script = this.matchedTranscript?.script;
