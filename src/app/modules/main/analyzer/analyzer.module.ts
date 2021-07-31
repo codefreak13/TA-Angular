@@ -13,6 +13,7 @@ import { CoreModule } from "src/app/core/core.module";
 
 import AnalyzerComponent from "./analyzer.component";
 import { ROUTES } from "./analyzer.routes";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 @NgModule({
   declarations: [AnalyzerComponent],
@@ -27,6 +28,7 @@ import { ROUTES } from "./analyzer.routes";
     MatTableModule,
     FormsModule,
     MatTooltipModule,
+    FlexLayoutModule,
   ],
 })
 export class AnalyzerModule {}
