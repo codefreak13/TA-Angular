@@ -11,7 +11,7 @@ body {
 .mat-slider {
   .mat-slider-thumb,
   .mat-slider-track-fill {
-    background-color: #5a5a71 !important;
+    background-color: #58585e !important;
   }
 
   .mat-slider-min-value:not(.mat-slider-thumb-label-showing) {
@@ -41,4 +41,10 @@ mat-tooltip-component .mat-tooltip {
   font-size: 1rem;
   background-color: #616161;
   margin-bottom: -0.1rem;
+}
+
+.select {
+  .mat-form-field {
+    width: 100% !important;
+  }
 }

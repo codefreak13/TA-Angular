@@ -4,9 +4,20 @@
 />
 
 <ng-template #subHeader>
-  <div class="flex">
-    <div class="selects">
-      <div class="select">
+  <div
+    class="flex"
+    fxLayout="row"
+    fxLayout.lt-md="column"
+    fxLayoutAlign="space-between"
+  >
+    <div
+      class="selects"
+      fxLayout="row"
+      fxLayoutGap="1.5rem"
+      fxFlex="45"
+      fxFlex-md-lt="initial"
+    >
+      <div class="select" fxFlex.md-lt="100" fxFlex="1 1 calc(50%-1.5rem)">
         <mat-form-field appearance="fill" class="formField">
           <mat-icon matPrefix>account_circle</mat-icon>
           <mat-select
@@ -25,7 +36,7 @@
         </mat-form-field>
       </div>
 
-      <div class="select">
+      <div class="select" fxFlex.md-lt="100" fxFlex="1 1 calc(50%-1.5rem)">
         <mat-form-field appearance="fill" class="callFormField">
           <mat-icon matPrefix>call</mat-icon>
           <mat-select
@@ -37,6 +48,7 @@
             name="call"
           >
             <mat-option
+              fxFlex="100%"
               *ngFor="let call of calls.activeAgentCalls$ | async"
               [value]="call.id"
               >{{ call?.startTime | date: "dd/MM/yyyy" }} -
@@ -65,8 +77,14 @@
 </ng-template>
 
 <section *ngIf="!(calls.isLoading$ | async); else showThis">
-  <div *ngIf="calls.activeTranscript$ | async as call" class="content">
-    <div class="card">
+  <div
+    *ngIf="calls.activeTranscript$ | async as call"
+    class="content"
+    fxLayout="row"
+    fxLayout.lt-md="column"
+    fxLayoutAlign="space-between"
+  >
+    <div class="card" fxFlex.lt-md="initial" fxFlex="1 1 calc(50%-0.75em)">
       <h1>
         Real
         <span
@@ -110,7 +128,7 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" fxFlex.lt-md="initial" fxFlex="1 1 calc(50%-0.75em)">
       <h1>
         Expected
         <span
