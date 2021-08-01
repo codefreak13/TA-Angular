@@ -81,13 +81,23 @@ export default class AnalyzerComponent implements AfterViewInit {
 
   public highlightMatchedScriptLines(element: Script): string {
     const script = this.calls.scriptOrderIds$.value;
-    let b;
+    // ? Shorter version since the condition is not so long
+    let b = (script?.includes(element?.order)) ? "highlightedColorStyle" : "normalColorStyle";
 
-    if (script?.includes(element?.order)) {
-      b = "highlightedColorStyle";
-    } else {
-      b = "normalColorStyle";
-    }
+    // let b;
+
+    // if (script?.includes(element?.order)) {
+    //   b = "highlightedColorStyle";
+    // } else {
+    //   b = "normalColorStyle";
+    // }
+
+    // if (element?.order === this.matchedSentenceLine) {
+    //   if (this.highlightMatchingScript && 
+    //     element.similarity && this.calls.matchValue.value &&
+    //     (element.similarity * 100) >= this.calls.matchValue.value) {}
+    // } // ? It seems better to have nested conditions to help make the code readable
+    // ? Best to break them down into nested functions
 
     if (
       element &&
@@ -102,6 +112,7 @@ export default class AnalyzerComponent implements AfterViewInit {
   }
 
   public toolTipData(element: Script): string {
+    // if (element?.similarity && this.matchedSentenceLine) {}
     if (
       element.similarity &&
       element.matchingSentence &&
